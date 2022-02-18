@@ -122,7 +122,7 @@ class ListaTransferencias extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transferencias'),
+        title: Text('Transerencias'),
         backgroundColor: Colors.green,
       ),
       //scaffold nao usa o Child como padrao, mas sim o body
