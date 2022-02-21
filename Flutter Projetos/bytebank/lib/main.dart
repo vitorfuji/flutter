@@ -1,8 +1,12 @@
+import 'package:bytebank/screens/transferencia/lista.dart';
 import 'package:flutter/material.dart';
 
 /*atalhos:
 
 - https://docs.flutter.dev/
+- material.io
+- https://medium.com/flutter-community/flutter-code-organization-de3a4c219149 organizar o codigo
+- criar Directory pra separar o codigo, botao direito no lib->new->directory
 - hot reload = recarrega imediatamente as alteracoes, aumenta nivel de velocidade do desenvolvimento
 - ctrl + \ = hot reload
 - ctrl + d = copia e cola embaixo o mesmo conteudo da linha ou selecionado
@@ -25,175 +29,17 @@ class ByteBankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.green[700],
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.deepPurple[100],
+          textTheme: ButtonTextTheme.primary,
+        ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.deepPurple[100]),
+      ),
       //Widget que envolve varios widgets que sao necessarios para os apps de material design
-      home: Scaffold(
-        body: ListaTransferencias(),
-      ),
+      home: ListaTransferencias(),
+
     );
   }
 }
 
-class FormularioTransferencia extends StatelessWidget {
-  final TextEditingController controladorCampoNumeroConta =
-      TextEditingController();
-  final TextEditingController controladorCampoValor = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    //consome interface
-    return Scaffold(
-        //scaffold é uma classe do flutter que tem varios widgets
-        appBar: AppBar(
-          title: Text('Criando Transferência'),
-        ),
-        body: Column(
-          children: <Widget>[
-            Editor(
-              controlador: controladorCampoNumeroConta,
-              dica: '0000',
-              rotulo: 'Número da Conta',
-            ),
-            Editor(
-                controlador: controladorCampoValor,
-                rotulo: ('Valor'),
-                dica: ('0.00'),
-                icone: Icons.monetization_on),
-            ElevatedButton(
-              //botao na tela
-              child: Text('Confirmar'),
-              onPressed: () => criaTransferencia(context),
-            )
-          ],
-        ));
-  }
-
-  void criaTransferencia(BuildContext context) {
-    final int? numeroConta = int.tryParse(
-        controladorCampoNumeroConta.text); //tentar converter para int
-    final double? valor = double.tryParse(
-        controladorCampoValor.text); //tentar converter para double
-    if (numeroConta != null && valor != null) {
-      //verificacao se for nulo fará a transferencia
-      final transferenciaCriada = Transferencia(valor, numeroConta);
-      debugPrint('Criando transferencia');
-      debugPrint('$transferenciaCriada');
-      Navigator.pop(context, transferenciaCriada); //vai notificar nossa lista
-    }
-  }
-}
-
-class Editor extends StatelessWidget {
-  final TextEditingController controlador;
-  final String rotulo;
-  final String dica;
-  final IconData? icone;
-
-  const Editor(
-      {Key? key,
-      required this.controlador,
-      required this.rotulo,
-      required this.dica,
-      this.icone})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      //alt + enter = add padding
-      padding: const EdgeInsets.all(16.0),
-      //margin nas laterais, o "all" faz com que seja pra todos os lados
-      child: TextField(
-        controller: controlador,
-        style: TextStyle(fontSize: 24.0),
-        decoration: InputDecoration(
-          icon: icone != null ? Icon(icone) : null,
-          //verificar se o icone for diferente de nulo, se for verdade manda o icone senao manda referencia nula
-          labelText: rotulo,
-          hintText: dica,
-        ),
-        keyboardType: TextInputType.number,
-      ),
-    );
-  }
-}
-
-class ListaTransferencias extends StatefulWidget {
-  final List<Transferencia> transferencias = [];
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return ListaTransferenciasState();
-  }
-}
-
-class ListaTransferenciasState extends State<ListaTransferencias> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Transferencias'),
-        backgroundColor: Colors.green,
-      ),
-      //scaffold nao usa o Child como padrao, mas sim o body
-      body: ListView.builder(
-        //funcao capaz de manter solucao em lista de uma maneira dinamica, armazenando todos os itens
-        itemCount: widget.transferencias.length, //quantidade de itens
-        itemBuilder: (context, indice) {
-          //funcao de callback
-          final transferencia = widget.transferencias[indice];
-          return ItemTransferencia(transferencia);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          final Future future =
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-            //push empurra pra tela route rota que vai ser direcionada a navegacao
-            //MaterialPageRoute argumentos pra navegar na tela que queremos
-            return FormularioTransferencia(); //vai pra esse widget, acessar o formulario
-          }));
-          future.then((transferenciaRecebida) {
-            //future atento as notificacoes que vier do navigator, e quando receber vai pro THEN e diz que recebeu, e ai faz o que quisermos
-            debugPrint('chegou no then do future');
-            debugPrint('$transferenciaRecebida');
-            setState(() {
-              widget.transferencias.add(transferenciaRecebida);
-            });
-          });
-        },
-      ),
-    );
-  }
-}
-
-class ItemTransferencia extends StatelessWidget {
-  final Transferencia transferencia;
-
-  ItemTransferencia(
-      this.transferencia); //indica no construtor que vamos receber uma transferencia diretamente pro atributo que criamos
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        child: ListTile(
-      leading: Icon(Icons.monetization_on),
-      title: Text(transferencia.valor.toString()),
-      subtitle: Text(transferencia.numeroConta.toString()),
-    ));
-  }
-}
-
-class Transferencia {
-  final double valor;
-  final int numeroConta;
-
-  Transferencia(this.valor, this.numeroConta);
-
-  @override
-  String toString() {
-    return 'Transferencia{valor: $valor, numeroConta: $numeroConta}';
-  } //no construtor esses dados serao exigidos pro usuario
-
-}
