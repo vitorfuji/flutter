@@ -40,6 +40,7 @@ class FormularioTransferencia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //consome interface
     return Scaffold(
         //scaffold é uma classe do flutter que tem varios widgets
         appBar: AppBar(
@@ -116,24 +117,36 @@ class Editor extends StatelessWidget {
   }
 }
 
-class ListaTransferencias extends StatelessWidget {
+class ListaTransferencias extends StatefulWidget {
+  final List<Transferencia> transferencias = [];
 
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return ListaTransferenciasState();
+  }
+}
+
+class ListaTransferenciasState extends State<ListaTransferencias> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transerencias'),
+        title: Text('Transferencias'),
         backgroundColor: Colors.green,
       ),
       //scaffold nao usa o Child como padrao, mas sim o body
-      body: Column(
-        children: <Widget>[
-          ItemTransferencia(Transferencia(100.0, 9398)),
-          ItemTransferencia(Transferencia(200.0, 9398)),
-          ItemTransferencia(Transferencia(300.0, 9398)),
-        ],
+      body: ListView.builder(
+        //funcao capaz de manter solucao em lista de uma maneira dinamica, armazenando todos os itens
+        itemCount: widget.transferencias.length, //quantidade de itens
+        itemBuilder: (context, indice) {
+          //funcao de callback
+          final transferencia = widget.transferencias[indice];
+          return ItemTransferencia(transferencia);
+        },
       ),
       floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
         onPressed: () {
           final Future future =
               Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -145,9 +158,11 @@ class ListaTransferencias extends StatelessWidget {
             //future atento as notificacoes que vier do navigator, e quando receber vai pro THEN e diz que recebeu, e ai faz o que quisermos
             debugPrint('chegou no then do future');
             debugPrint('$transferenciaRecebida');
+            setState(() {
+              widget.transferencias.add(transferenciaRecebida);
+            });
           });
         },
-        child: Icon(Icons.add),
       ),
     );
   }
