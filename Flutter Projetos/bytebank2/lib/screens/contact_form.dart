@@ -16,7 +16,7 @@ class _ContactFormState extends State<ContactForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('New Contact'),
+        title: const Text('New Contact'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -25,7 +25,7 @@ class _ContactFormState extends State<ContactForm> {
             TextField(
               controller: nameController,
               decoration: InputDecoration(labelText: 'Full name'),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24.0,
               ),
             ),
@@ -34,7 +34,7 @@ class _ContactFormState extends State<ContactForm> {
               child: TextField(
                 controller: accountNumberController,
                 decoration: InputDecoration(labelText: 'Account number'),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24.0,
                 ),
                 keyboardType: TextInputType.number,
@@ -45,7 +45,7 @@ class _ContactFormState extends State<ContactForm> {
               child: SizedBox(
                 width: double.maxFinite,
                 child: ElevatedButton(
-                  child: Text('Create'),
+                  child: const Text('Create'),
                   onPressed: () {
                     final String name = nameController.text;
                     final int? accountNumber =
