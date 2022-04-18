@@ -4,10 +4,10 @@ class Contact {
   final int accountNumber;
 
   Contact(
-    this.id,
-    this.name,
-    this.accountNumber,
-  );
+      this.id,
+      this.name,
+      this.accountNumber,
+      );
 
   @override
   String toString() {

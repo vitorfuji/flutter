@@ -1,3 +1,4 @@
+
 import 'package:bytebank2/models/contact.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -24,8 +25,8 @@ Future<int> save(Contact contact) {
 }
 
 Future<List<Contact>> findAll() {
- return createDatabase().then((db) {
-   return db.query('contacts').then((maps) {
+  return createDatabase().then((db) {
+    return db.query('contacts').then((maps) {
       final List<Contact> contacts = [];
       for (Map<String, dynamic> map in maps) {
         final Contact contact = Contact(
